@@ -1,0 +1,33 @@
+ s_value = len(self.plaintext_blocks[i])
+                
+                cp = self.cipher[-1][s_value:]
+                
+                yy = self.plaintext_blocks[i] + cp
+                
+
+                encrypted_sector = AES128_ENCRYPTION(binary_to_hex(dec_to_binary(temp_tweaks[i])),self.keys[1]).encrypt()
+                
+                a = gf128_multiplication('02','01')
+                for j in range(i):
+                                    
+                    
+                    a = gf128_multiplication('02',binary_to_hex(a))
+                   
+                # multiply by the outcome of AES_ENCRYPTION
+                
+                mult_value = gf128_multiplication(encrypted_sector,binary_to_hex(a))
+                
+                # xor plaintext_block with mult_value
+                xor_value = binary_to_hex(xor(mult_value,hex_to_binary(yy)))
+                
+                # feed xor_value into aes
+                scnd_encryption = AES128_ENCRYPTION(xor_value,self.keys[0]).encrypt()
+                
+                # xor second_encrption  with mult_value to get_cyphertext
+                ciphertext = binary_to_hex(xor(hex_to_binary(scnd_encryption),mult_value))
+                
+                last_cyphertext = self.cipher[-1][:s_value]
+                self.cipher.pop(-1)
+                self.cipher.append(ciphertext)
+                self.cipher.append(last_cyphertext)
+                
